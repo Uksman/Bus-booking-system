@@ -1,11 +1,10 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-//import { useRouter } from "expo-router";
-
+import { useRouter } from "expo-router";
 
 export default function Index() {
-
-  //const router = useRouter()
+  
+  const router = useRouter()
 
   return (
     <View style={styles.container}>
@@ -20,13 +19,13 @@ export default function Index() {
           flexible, and reliable.
         </Text>
         <TouchableOpacity
-          style={styles.button}
-          >
+          onPress={()=> router.push('/auth/Login')}
+          style={styles.button}>
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
       </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -82,4 +81,3 @@ const styles = StyleSheet.create({
 });
 
 
-//onPress={() => router.push("/auth/Login")}
