@@ -130,7 +130,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
-      <StatusBar style='auto' />
+      <StatusBar hidden={true} />
     </SafeAreaProvider>
   );
 }

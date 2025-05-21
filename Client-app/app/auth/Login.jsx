@@ -1,6 +1,15 @@
-import { Text, View, TextInput, TouchableOpacity, Pressable, ActivityIndicator } from "react-native";
-import React, { useState } from "react";
 import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import authService from "../../services/authService";
 
 const Login = () => {
   const router = useRouter();
@@ -30,15 +39,24 @@ const Login = () => {
   const handleLogin = async () => {
     if (!validateForm()) return;
 
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      router.push("/(tabs)");
-    } catch (error) {
-      setErrors({ submit: "Invalid email or password" });
-    } finally {
+      const response = await authService.login(
+        formData.email,
+        formData.password
+      );
+
+      // Login successful
       setIsLoading(false);
+
+      // Navigate to tabs
+      router.replace("/(tabs)");
+    } catch (error) {
+      setIsLoading(false);
+      Alert.alert(
+        "Login Failed",
+        error.message || "Something went wrong. Please try again."
+      );
     }
   };
 
@@ -56,13 +74,15 @@ const Login = () => {
         <TextInput
           placeholder='Email'
           keyboardType='email-address'
-          className={`border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl px-4 py-3 text-base`}
+          className={`border ${
+            errors.email ? "border-red-500" : "border-gray-300"
+          } rounded-xl px-4 py-3 text-base`}
           value={formData.email}
           onChangeText={(text) => {
-            setFormData(prev => ({ ...prev, email: text }));
-            if (errors.email) setErrors(prev => ({ ...prev, email: null }));
+            setFormData((prev) => ({ ...prev, email: text }));
+            if (errors.email) setErrors((prev) => ({ ...prev, email: null }));
           }}
-          autoCapitalize="none"
+          autoCapitalize='none'
         />
         {errors.email && (
           <Text className='text-red-500 text-sm mt-1'>{errors.email}</Text>
@@ -73,11 +93,14 @@ const Login = () => {
         <TextInput
           placeholder='Password'
           secureTextEntry
-          className={`border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl px-4 py-3 text-base`}
+          className={`border ${
+            errors.password ? "border-red-500" : "border-gray-300"
+          } rounded-xl px-4 py-3 text-base`}
           value={formData.password}
           onChangeText={(text) => {
-            setFormData(prev => ({ ...prev, password: text }));
-            if (errors.password) setErrors(prev => ({ ...prev, password: null }));
+            setFormData((prev) => ({ ...prev, password: text }));
+            if (errors.password)
+              setErrors((prev) => ({ ...prev, password: null }));
           }}
         />
         {errors.password && (
@@ -90,7 +113,7 @@ const Login = () => {
         onPress={handleLogin}
         disabled={isLoading}>
         {isLoading ? (
-          <ActivityIndicator color="white" />
+          <ActivityIndicator color='white' />
         ) : (
           <Text className='text-white text-center font-semibold text-lg'>
             Login
@@ -98,16 +121,15 @@ const Login = () => {
         )}
       </TouchableOpacity>
 
-      <Pressable 
+      <Pressable
         className='mt-4'
         onPress={() => router.push("/auth/ForgotPassword")}>
-        <Text className='text-center text-orange-600'>
-          Forgot Password?
-        </Text>
+        <Text className='text-center text-orange-600'>Forgot Password?</Text>
       </Pressable>
 
       <Text className='text-center text-gray-500 mt-4'>
-        Don't have an account?{" "}
+        {" "}
+        Dont have an account?
         <Pressable onPress={() => router.push("/auth/Register")}>
           <Text className='text-orange-600'>Register</Text>
         </Pressable>
